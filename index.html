@@ -21,6 +21,17 @@
   <main class="container">
     <p id="status" class="status"></p>
 
+    <!-- LOG moved above the map -->
+    <section class="log">
+      <h2>Log</h2>
+      <table>
+        <thead>
+          <tr><th>Time</th><th>Button</th><th>Number</th></tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </section>
+
     <section class="map-assign">
       <div class="assign-controls">
         <span class="assign-label">Assign to:</span>
@@ -42,23 +53,13 @@
           <button id="btn-g"  class="btn btn-letter">G</button>
         </div>
 
-        <!-- empty SVG; script.js will inject real canton paths here -->
+        <!-- empty SVG; script.js will inject real canton paths -->
         <svg id="ch-map" viewBox="0 0 1000 700" role="img" aria-label="Swiss cantons">
           <g class="cantons" id="cantons-layer"></g>
         </svg>
       </div>
 
       <div class="counts" id="counts"></div>
-    </section>
-
-    <section class="log">
-      <h2>Log</h2>
-      <table>
-        <thead>
-          <tr><th>Time</th><th>Button</th><th>Number</th></tr>
-        </thead>
-        <tbody id="logBody"></tbody>
-      </table>
     </section>
 
     <footer class="footer">
