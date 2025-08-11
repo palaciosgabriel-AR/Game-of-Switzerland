@@ -17,7 +17,6 @@ initDarkMode();
 // Wire number buttons
 Object.entries(btns).forEach(([label, el]) => el.addEventListener('click', () => handlePress(label)));
 
-// Reset with confirmation
 resetBtn.addEventListener('click', () => {
   const sure = window.confirm('Reset numbers for D/Ä/G, clear the log, and clear the map?');
   if (!sure) return;
@@ -67,8 +66,7 @@ function appendLog(date, label, number) {
   tr.append(t,b,n);
   logBody.firstChild ? logBody.insertBefore(tr, logBody.firstChild) : logBody.appendChild(tr);
 }
-function fmt(d) { const p = x => String(x).padStart(2,'0');
-  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+function fmt(d) { const p = x => String(x).padStart(2,'0'); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
 function initDarkMode() {
   const saved = localStorage.getItem('dark') === '1';
   document.body.classList.toggle('dark', saved);
@@ -76,14 +74,14 @@ function initDarkMode() {
   darkToggle.addEventListener('change', e => {
     document.body.classList.toggle('dark', e.target.checked);
     localStorage.setItem('dark', e.target.checked ? '1' : '0');
-    applyMapColors(); // keep fills readable on theme change
+    applyMapColors();
   });
 }
 function resetAll() {
   used['D'].clear(); used['Ä'].clear(); used['G'].clear();
   Object.values(btns).forEach(b => (b.disabled = false));
   while (logBody.firstChild) logBody.removeChild(logBody.firstChild);
-  Object.keys(mapState).forEach(id => delete mapState[id]); // clear map
+  Object.keys(mapState).forEach(id => delete mapState[id]);
   saveMapState(); applyMapColors(); updateCounts(); updateStatus();
 }
 
@@ -98,20 +96,28 @@ chips.forEach(chip => chip.addEventListener('click', () => {
   localStorage.setItem('activePlayer', activePlayer);
   updateChips();
 }));
-function updateChips() { chips.forEach(ch =>
-  ch.classList.toggle('active', ch.dataset.player === activePlayer)); }
+function updateChips() { chips.forEach(ch => ch.classList.toggle('active', ch.dataset.player === activePlayer)); }
 updateChips();
 
-// Load canton SVG from Simplemaps; fallback to Wikimedia if needed.
+// More robust canton ID normalizer
+const normId = (raw) => {
+  if (!raw) return null;
+  let s = raw.toUpperCase().trim();
+  s = s.replace(/^CH[\-_.\s]?/, '');   // CHZH, CH-ZH, CH_ZH, CH.ZH -> ZH
+  s = s.replace(/[^A-Z]/g, '');        // strip anything non-letter
+  if (s.length > 2) s = s.slice(-2);   // take the last two letters
+  return /^[A-Z]{2}$/.test(s) ? s : null;
+};
+
 (async function loadCantonSvg() {
   const hostSvg = document.getElementById('ch-map');
   const layer = document.getElementById('cantons-layer');
 
   const sources = [
-    // Simplemaps admin1 SVG (ids like CHZH, CHBE, ...)
-    'https://simplemaps.com/static/svg/country/ch/admin1/ch.svg',
-    // Fallback: Wikimedia (ids usually ZH, BE, ...)
-    'https://upload.wikimedia.org/wikipedia/commons/f/f8/Suisse_cantons.svg'
+    // 1) Wikimedia (usually cleaner)
+    'https://upload.wikimedia.org/wikipedia/commons/f/f8/Suisse_cantons.svg',
+    // 2) Fallback: Simplemaps
+    'https://simplemaps.com/static/svg/country/ch/admin1/ch.svg'
   ];
 
   for (const url of sources) {
@@ -123,53 +129,54 @@ updateChips();
       const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
       const srcSvg = doc.documentElement;
 
-      // Use source viewBox for correct scaling
       const vb = srcSvg.getAttribute('viewBox');
       if (vb) hostSvg.setAttribute('viewBox', vb);
 
-      // Clear previous
       layer.innerHTML = '';
 
-      // Collect paths with IDs we can normalize to 2-letter codes
+      // Grab any <path> that looks like a canton by id
       const paths = Array.from(srcSvg.querySelectorAll('path[id]'));
+      let count = 0;
       paths.forEach(p => {
-        const raw = (p.getAttribute('id') || '').toUpperCase();
-        let code = raw.replace(/^CH-?/, '');      // CHZH or CH-ZH -> ZH
-        if (code.length > 2) code = code.slice(0, 2);
-        if (!/^[A-Z]{2}$/.test(code)) return;
+        const code = normId(p.getAttribute('id'));
+        if (!code) return;
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.setAttribute('class', 'canton');
         g.setAttribute('id', code);
-        g.appendChild(p.cloneNode(true));
 
-        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-        title.textContent = code;
-        g.appendChild(title);
+        const shape = p.cloneNode(true);
+        // Kill any source styling that might cause patterns/stripes
+        shape.removeAttribute('class');
+        shape.removeAttribute('style');
 
+        g.appendChild(shape);
         layer.appendChild(g);
+        count++;
       });
 
-      // Wire clicks
+      if (count < 20) throw new Error('Did not detect canton paths'); // try next source
+
       wireCantons();
       applyMapColors();
       updateCounts();
-      return; // success
+      return;
     } catch (e) {
       // try next source
     }
   }
 
-  // If both sources fail:
   document.getElementById('counts').textContent =
-    'Map failed to load. Check Content-Security-Policy or network.';
+    'Map failed to load. (If this persists, we’ll inline a clean SVG.)';
 })();
 
 function wireCantons() {
   const hostSvg = document.getElementById('ch-map');
   const cantonGroups = Array.from(hostSvg.querySelectorAll('.canton'));
   cantonGroups.forEach(g => {
-    const id = g.id;
+    const id = normId(g.id);
+    if (!id) return;
+    g.id = id; // ensure canonical
     g.addEventListener('click', () => {
       const current = mapState[id];
       if (!current) mapState[id] = activePlayer;
@@ -180,23 +187,22 @@ function wireCantons() {
   });
 }
 
-// Color fills from state
 function applyMapColors() {
-  const hostSvg = document.getElementById('ch-map');
   const dark = document.body.classList.contains('dark');
-  const cantons = Array.from(hostSvg.querySelectorAll('.canton'));
+  const cantons = Array.from(document.querySelectorAll('#ch-map .canton'));
   cantons.forEach(g => {
     const id = g.id;
     const owner = mapState[id];
     const path = g.querySelector('path, rect');
     if (!path) return;
 
+    // Force styles (override any embedded patterns/classes)
     if (owner) {
-      path.setAttribute('fill', COLORS[owner]);
-      path.setAttribute('stroke', 'rgba(255,255,255,.85)');
+      path.style.fill   = COLORS[owner];
+      path.style.stroke = 'rgba(255,255,255,.85)';
     } else {
-      path.setAttribute('fill', dark ? '#1b1c21' : 'rgba(255,255,255,.9)');
-      path.setAttribute('stroke', dark ? '#2a2a2a' : 'rgba(0,0,0,.25)');
+      path.style.fill   = dark ? '#1b1c21' : 'rgba(255,255,255,.9)';
+      path.style.stroke = dark ? '#2a2a2a' : 'rgba(0,0,0,.25)';
     }
   });
 }
