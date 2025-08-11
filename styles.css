@@ -137,15 +137,15 @@ body {
   padding: 1rem 1.4rem;
 }
 
-/* Canton shapes */
-.canton path, .canton rect {
-  fill: rgba(255,255,255,.9) !important;  /* default white-ish */
+/* Canton shapes (we override any source styles) */
+.canton path, .canton rect, .canton polygon {
+  fill: rgba(255,255,255,.9) !important;  /* default */
   stroke: rgba(0,0,0,.25) !important;
   stroke-width: 1;
   cursor: pointer;
   transition: transform .06s ease, fill .15s ease, stroke .15s ease;
 }
-.canton:hover path, .canton:hover rect { transform: translateY(-1px); }
+.canton:hover path, .canton:hover rect, .canton:hover polygon { transform: translateY(-1px); }
 
 /* Counts under the map */
 .counts { text-align: center; margin-top: .6rem; opacity: .95; font-weight: 600; }
@@ -199,7 +199,7 @@ body.dark .buttons-overlay {
 
 /* Map surface + canton defaults in dark mode */
 body.dark #ch-map { background: #121317; border-color: #2a2a2a; }
-body.dark .canton path, body.dark .canton rect {
+body.dark .canton path, body.dark .canton rect, body.dark .canton polygon {
   fill: #1b1c21 !important;
   stroke: #2a2a2a !important;
 }
