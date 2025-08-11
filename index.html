@@ -21,12 +21,6 @@
   <main class="container">
     <p id="status" class="status"></p>
 
-    <div class="buttons">
-      <button id="btn-d"  class="btn btn-letter">D</button>
-      <button id="btn-ae" class="btn btn-letter">Ä</button>
-      <button id="btn-g"  class="btn btn-letter">G</button>
-    </div>
-
     <section class="map-assign">
       <div class="assign-controls">
         <span class="assign-label">Assign to:</span>
@@ -40,47 +34,17 @@
         </span>
       </div>
 
-      <!-- Placeholder SVG layout (rects). Swap with a *real canton SVG* later. Keep the same IDs. -->
       <div class="map-wrap">
-        <svg id="ch-map" viewBox="0 0 520 360" role="img" aria-label="Switzerland map with cantons">
-          <!-- Define canton IDs (use official 2-letter codes). -->
-          <g class="cantons" font-size="11" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial">
-            <!-- Grid of 26 rects with labels -->
-            <!-- Row 1 -->
-            <g id="ZH" class="canton" transform="translate(20,20)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">ZH</text></g>
-            <g id="BE" class="canton" transform="translate(120,20)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">BE</text></g>
-            <g id="LU" class="canton" transform="translate(220,20)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">LU</text></g>
-            <g id="UR" class="canton" transform="translate(320,20)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">UR</text></g>
-            <!-- Row 2 -->
-            <g id="SZ" class="canton" transform="translate(20,90)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">SZ</text></g>
-            <g id="OW" class="canton" transform="translate(120,90)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">OW</text></g>
-            <g id="NW" class="canton" transform="translate(220,90)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">NW</text></g>
-            <g id="GL" class="canton" transform="translate(320,90)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">GL</text></g>
-            <!-- Row 3 -->
-            <g id="ZG" class="canton" transform="translate(20,160)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">ZG</text></g>
-            <g id="FR" class="canton" transform="translate(120,160)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">FR</text></g>
-            <g id="SO" class="canton" transform="translate(220,160)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">SO</text></g>
-            <g id="BS" class="canton" transform="translate(320,160)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">BS</text></g>
-            <!-- Row 4 -->
-            <g id="BL" class="canton" transform="translate(20,230)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">BL</text></g>
-            <g id="SH" class="canton" transform="translate(120,230)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">SH</text></g>
-            <g id="AR" class="canton" transform="translate(220,230)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">AR</text></g>
-            <g id="AI" class="canton" transform="translate(320,230)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">AI</text></g>
-            <!-- Row 5 -->
-            <g id="SG" class="canton" transform="translate(20,300)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">SG</text></g>
-            <g id="GR" class="canton" transform="translate(120,300)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">GR</text></g>
-            <g id="AG" class="canton" transform="translate(220,300)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">AG</text></g>
-            <g id="TG" class="canton" transform="translate(320,300)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">TG</text></g>
-            <!-- Extra row for 6 more -->
-            <g id="VD" class="canton" transform="translate(420,20)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">VD</text></g>
-            <g id="VS" class="canton" transform="translate(420,90)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">VS</text></g>
-            <g id="NE" class="canton" transform="translate(420,160)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">NE</text></g>
-            <g id="GE" class="canton" transform="translate(420,230)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">GE</text></g>
-            <g id="TI" class="canton" transform="translate(420,300)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">TI</text></g>
-            <g id="JU" class="canton" transform="translate(20,20) translate(0,-9999)"><rect width="80" height="50" rx="6"></rect><text x="40" y="30" text-anchor="middle">JU</text></g>
-            <!-- Note: We’re missing one visually in the grid; to keep 26 IDs present, JU is hidden off-canvas for now.
-                 When we swap in the real canton SVG, JU will be visible with real geometry. -->
-          </g>
+        <!-- overlayed number buttons -->
+        <div class="buttons buttons-overlay">
+          <button id="btn-d"  class="btn btn-letter">D</button>
+          <button id="btn-ae" class="btn btn-letter">Ä</button>
+          <button id="btn-g"  class="btn btn-letter">G</button>
+        </div>
+
+        <!-- empty SVG; script.js will inject real canton paths here -->
+        <svg id="ch-map" viewBox="0 0 1000 700" role="img" aria-label="Swiss cantons">
+          <g class="cantons" id="cantons-layer"></g>
         </svg>
       </div>
 
