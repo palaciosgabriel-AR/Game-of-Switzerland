@@ -1,11 +1,19 @@
 :root { color-scheme: light dark; }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.5; }
+
+/* Light mode baseline: AdventureRooms-style red + white text */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  background: #b00016;   /* deep Swiss-red vibe */
+  color: #ffffff;        /* white text for contrast */
+}
 
 /* Top bar */
 .topbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: .8rem 1rem; border-bottom: 1px solid #e0e0e0;
+  padding: .8rem 1rem; border-bottom: 1px solid rgba(255,255,255,.25);
 }
 .brand { font-size: clamp(1.2rem, 2vw + .5rem, 1.8rem); display: flex; gap: .35rem; align-items: center; }
 .flag { font-size: 1em; }
@@ -13,45 +21,53 @@ body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial
 
 .container { max-width: 900px; margin: 1.2rem auto 3rem; padding: 0 1rem; }
 
-.status { text-align: center; margin: 0 0 1.25rem; font-weight: 600; }
+.status { text-align: center; margin: 0 0 1.25rem; font-weight: 700; }
 
 .buttons { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
 /* Base button */
 .btn {
   padding: .85rem 1.15rem;
-  border: 1px solid #9aa0a6;
+  border: 1px solid rgba(255,255,255,.6);
   border-radius: .8rem;
-  background: transparent;
+  background: rgba(255,255,255,.95);   /* light button on red bg */
+  color: #111;
   cursor: pointer;
   font-size: 1rem;
   transition: transform .05s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
 }
+.btn:hover { background: #ffffff; }
 .btn:active { transform: translateY(1px); }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
 
 /* Big stylish letter buttons */
 .btn-letter {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.7rem;
+  font-weight: 900;
   letter-spacing: .02em;
   padding: 1rem 1.4rem;
-  text-shadow: 0 1px 0 rgba(0,0,0,.05);
+  border-width: 2px;
+  border-color: #ffffff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.08);
 }
 
 /* Log table */
 .log h2 { margin: 1rem 0 .5rem; font-size: 1.2rem; }
 table { width: 100%; border-collapse: collapse; }
-th, td { border-bottom: 1px solid #e0e0e0; padding: .55rem .5rem; text-align: left; }
+th, td {
+  border-bottom: 1px solid rgba(255,255,255,.25);
+  padding: .55rem .5rem; text-align: left;
+}
 tbody tr:last-child td { border-bottom: none; }
 
 /* Footer (reset button) */
 .footer { display: flex; justify-content: center; margin-top: 2rem; }
 .btn-reset {
-  border-color: #c62828;
-  color: #c62828;
+  border-color: #8b0000;
+  color: #8b0000;
+  background: #fff;
 }
-.btn-reset:hover { background: rgba(198,40,40,.06); }
+.btn-reset:hover { background: #f7f7f7; }
 
 /* Dark mode */
 body.dark { background:#0b0c0e; color:#e7e7ea; }
@@ -59,15 +75,17 @@ body.dark .topbar { border-bottom-color: #2a2a2a; }
 body.dark th, body.dark td { border-bottom-color: #2a2a2a; }
 body.dark .btn { border-color: #4b4f56; }
 
-/* Ensure letter buttons are readable in dark mode */
+/* Letter buttons readable in dark mode */
 body.dark .btn-letter {
   background: #111214;
-  color: #ffffff;            /* <-- white letters on black */
-  text-shadow: none;
+  color: #ffffff;            /* white letters on dark */
+  border-color: #ffffff;
+  box-shadow: none;
 }
 
 /* Reset button in dark mode */
 body.dark .btn-reset {
+  background: transparent;
   border-color: #ff6b6b;
   color: #ff6b6b;
 }
