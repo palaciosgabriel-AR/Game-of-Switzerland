@@ -1,7 +1,7 @@
 const TOTAL = 26;
 
-// independent used-sets per button
-const used = { 'Ä': new Set(), 'D': new Set(), 'G': new Set() };
+// independent used-sets per button (order D, Ä, G)
+const used = { 'D': new Set(), 'Ä': new Set(), 'G': new Set() };
 
 const statusEl   = document.getElementById('status');
 const logBody    = document.getElementById('logBody');
@@ -9,8 +9,8 @@ const darkToggle = document.getElementById('darkToggle');
 const resetBtn   = document.getElementById('reset');
 
 const btns = {
-  'Ä': document.getElementById('btn-ae'),
   'D': document.getElementById('btn-d'),
+  'Ä': document.getElementById('btn-ae'),
   'G': document.getElementById('btn-g'),
 };
 
@@ -24,7 +24,7 @@ Object.entries(btns).forEach(([label, el]) => {
 
 // Reset with confirmation
 resetBtn.addEventListener('click', () => {
-  const sure = window.confirm('Reset all numbers for Ä, D, and G and clear the log?');
+  const sure = window.confirm('Reset all numbers for D, Ä, and G and clear the log?');
   if (!sure) return;
   resetAll();
 });
@@ -63,8 +63,9 @@ function nextAvailableFrom(start, set) {
 function rand1toN(n) { return Math.floor(Math.random() * n) + 1; }
 
 function updateStatus() {
+  // Show in D, Ä, G order
   const left = (label) => TOTAL - used[label].size;
-  statusEl.textContent = `Numbers left — Ä: ${left('Ä')}, D: ${left('D')}, G: ${left('G')}`;
+  statusEl.textContent = `Numbers left — D: ${left('D')}, Ä: ${left('Ä')}, G: ${left('G')}`;
 }
 
 function setButtonDisabled(label, disabled) {
@@ -109,11 +110,10 @@ function initDarkMode() {
 }
 
 function resetAll() {
-  used['Ä'].clear();
   used['D'].clear();
+  used['Ä'].clear();
   used['G'].clear();
   Object.values(btns).forEach(b => (b.disabled = false));
-  // Clear log
   while (logBody.firstChild) logBody.removeChild(logBody.firstChild);
   updateStatus();
 }
