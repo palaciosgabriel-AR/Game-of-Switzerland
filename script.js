@@ -12,7 +12,7 @@ const btns = { 'D': document.getElementById('btn-d'),
                'G': document.getElementById('btn-g') };
 
 /* state persisted in localStorage */
-let used = loadUsedSets();                 // { D:[...], Ä:[...], G:[...] } -> we convert to Sets
+let used = loadUsedSets();                 // { D:[...], Ä:[...], G:[...] } arrays
 let logEntries = loadLogEntries();         // [{t:'HH:MM:SS', p:'D', n:7}, ...]
 
 // convert arrays -> Sets for fast lookup
@@ -159,13 +159,13 @@ chips.forEach(chip => chip.addEventListener('click', () => {
 function updateChips() { chips.forEach(ch => ch.classList.toggle('active', ch.dataset.player === activePlayer)); }
 updateChips();
 
-// Robust canton ID normalizer (and whitelist)
+// Canonicalize ids
 const normId = (raw) => {
   if (!raw) return null;
   let s = raw.toUpperCase().trim();
   s = s.replace(/^CH[\-_.\s]?/, '');   // CHZH, CH-ZH, CH_ZH, CH.ZH -> ZH
   s = s.replace(/[^A-Z]/g, '');        // keep letters only
-  if (s.length > 2) s = s.slice(-2);   // last two letters
+  if (s.length > 2) s = s.slice(-2);
   return CODESET.has(s) ? s : null;
 };
 
@@ -191,7 +191,6 @@ const normId = (raw) => {
 
       layer.innerHTML = '';
 
-      // Build one <g class="canton" id="XX"> per canton.
       const ensureGroup = (code) => {
         let g = layer.querySelector(`g#${code}`);
         if (!g) {
@@ -205,26 +204,34 @@ const normId = (raw) => {
 
       let added = new Set();
 
-      // 1) Some sources have canton <g id="ZH"><path .../><path .../></g>
+      // Some sources use <g id="ZH">…<path/>…</g>
       Array.from(srcSvg.querySelectorAll('g[id]')).forEach(srcG => {
         const code = normId(srcG.getAttribute('id'));
         if (!code) return;
         const dest = ensureGroup(code);
         Array.from(srcG.querySelectorAll('path, polygon, rect')).forEach(sh => {
           const clone = sh.cloneNode(true);
-          clone.removeAttribute('class'); clone.removeAttribute('style'); clone.removeAttribute('fill'); clone.removeAttribute('stroke'); clone.removeAttribute('opacity');
+          clone.removeAttribute('class');
+          clone.removeAttribute('style');
+          clone.removeAttribute('fill');
+          clone.removeAttribute('stroke');
+          clone.removeAttribute('opacity');
           dest.appendChild(clone);
         });
         added.add(code);
       });
 
-      // 2) Others put ids directly on the paths
+      // Others put ids directly on shapes
       Array.from(srcSvg.querySelectorAll('path[id], polygon[id], rect[id]')).forEach(sh => {
         const code = normId(sh.getAttribute('id'));
         if (!code) return;
         const dest = ensureGroup(code);
         const clone = sh.cloneNode(true);
-        clone.removeAttribute('class'); clone.removeAttribute('style'); clone.removeAttribute('fill'); clone.removeAttribute('stroke'); clone.removeAttribute('opacity');
+        clone.removeAttribute('class');
+        clone.removeAttribute('style');
+        clone.removeAttribute('fill');
+        clone.removeAttribute('stroke');
+        clone.removeAttribute('opacity');
         dest.appendChild(clone);
         added.add(code);
       });
@@ -250,7 +257,7 @@ function wireCantons() {
   cantonGroups.forEach(g => {
     const id = normId(g.id);
     if (!id) return;
-    g.id = id; // normalize
+    g.id = id;
     g.addEventListener('click', () => {
       const current = mapState[id];
       if (!current) mapState[id] = activePlayer;
@@ -269,6 +276,7 @@ function applyMapColors() {
     const owner = mapState[id];
     const shapes = Array.from(g.querySelectorAll('path, rect, polygon'));
     shapes.forEach(path => {
+      // Set inline styles (wins over stylesheet, now that CSS has no !important)
       if (owner) {
         path.style.fill   = COLORS[owner];
         path.style.stroke = 'rgba(255,255,255,.85)';
