@@ -1,87 +1,34 @@
-// Global draw state: 1..26 without repeating across all three buttons
-const TOTAL = 26;
-const used = new Set();
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.5; }
 
-const statusEl = document.getElementById('status');
-const logBody  = document.getElementById('logBody');
-const btns = {
-  'Ä': document.getElementById('btn-ae'),
-  'D': document.getElementById('btn-d'),
-  'G': document.getElementById('btn-g'),
-};
-
-Object.entries(btns).forEach(([label, el]) => {
-  el.addEventListener('click', () => handlePress(label));
-});
-
-updateStatus();
-
-function handlePress(label) {
-  // Pick a random start in [1..26]
-  const start = rand1toN(TOTAL);
-  const n = nextAvailableFrom(start); // respects "next following number if repeat"
-
-  const ts = new Date();
-  if (n === null) {
-    appendLog(ts, label, '—');
-    statusEl.textContent = 'All numbers drawn. (0 left)';
-    setButtonsDisabled(true);
-    return;
-  }
-
-  used.add(n);
-  appendLog(ts, label, n);
-  updateStatus();
-
-  if (used.size === TOTAL) setButtonsDisabled(true);
+/* Top bar */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .8rem 1rem; border-bottom: 1px solid #e0e0e0;
 }
+.brand { font-size: clamp(1.2rem, 2vw + .5rem, 1.8rem); display: flex; gap: .35rem; align-items: center; }
+.flag { font-size: 1em; }
+.toggle { display: inline-flex; gap: .5rem; align-items: center; user-select: none; }
 
-function nextAvailableFrom(start) {
-  if (used.size >= TOTAL) return null;
-  let candidate = start;
-  for (let i = 0; i < TOTAL; i++) {
-    if (!used.has(candidate)) return candidate;
-    candidate = candidate % TOTAL + 1; // wrap 26 -> 1
-  }
-  return null; // should not happen
+.container { max-width: 900px; margin: 1.2rem auto 3rem; padding: 0 1rem; }
+
+.status { text-align: center; margin: 0 0 1.25rem; font-weight: 600; }
+
+.buttons { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.btn {
+  padding: .9rem 1.2rem; border: 1px solid #9aa0a6; border-radius: .8rem;
+  background: transparent; cursor: pointer; font-size: 1.2rem; min-width: 4.5rem;
 }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
 
-function rand1toN(n) {
-  return Math.floor(Math.random() * n) + 1;
-}
+.log h2 { margin: 1rem 0 .5rem; font-size: 1.2rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border-bottom: 1px solid #e0e0e0; padding: .55rem .5rem; text-align: left; }
+tbody tr:last-child td { border-bottom: none; }
 
-function updateStatus() {
-  const left = TOTAL - used.size;
-  statusEl.textContent = `Numbers left: ${left}`;
-}
-
-function setButtonsDisabled(disabled) {
-  Object.values(btns).forEach(b => (b.disabled = disabled));
-}
-
-function appendLog(date, label, number) {
-  const tr = document.createElement('tr');
-
-  const t = document.createElement('td');
-  t.textContent = formatTime(date);
-
-  const b = document.createElement('td');
-  b.textContent = label;
-
-  const n = document.createElement('td');
-  n.textContent = number;
-
-  tr.appendChild(t);
-  tr.appendChild(b);
-  tr.appendChild(n);
-  logBody.appendChild(tr);
-
-  // Auto-scroll to newest row
-  tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function formatTime(d) {
-  // Local time, HH:MM:SS.mmm
-  const pad = (x, n=2) => String(x).padStart(n, '0');
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(),3)}`;
-}
+/* Dark mode */
+body.dark { background:#0b0c0e; color:#e7e7ea; }
+body.dark .topbar { border-bottom-color: #2a2a2a; }
+body.dark th, body.dark td { border-bottom-color: #2a2a2a; }
+body.dark .btn { border-color: #4b4f56; }
