@@ -21,7 +21,7 @@
   <main class="container">
     <p id="status" class="status"></p>
 
-    <!-- LOG moved above the map -->
+    <!-- LOG (newest first, now persists) -->
     <section class="log">
       <h2>Log</h2>
       <table>
@@ -32,12 +32,14 @@
       </table>
     </section>
 
+    <!-- MAP + assignment -->
     <section class="map-assign">
       <div class="assign-controls">
         <span class="assign-label">Assign to:</span>
         <button class="chip" data-player="D">D</button>
         <button class="chip" data-player="Ä">Ä</button>
         <button class="chip" data-player="G">G</button>
+
         <span class="legend">
           <span class="swatch swatch-d"></span>D
           <span class="swatch swatch-ae"></span>Ä
@@ -53,7 +55,7 @@
           <button id="btn-g"  class="btn btn-letter">G</button>
         </div>
 
-        <!-- empty SVG; script.js will inject real canton paths -->
+        <!-- empty SVG; script.js injects real canton paths -->
         <svg id="ch-map" viewBox="0 0 1000 700" role="img" aria-label="Swiss cantons">
           <g class="cantons" id="cantons-layer"></g>
         </svg>
