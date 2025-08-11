@@ -1,34 +1,119 @@
-:root { color-scheme: light dark; }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.5; }
+const TOTAL = 26;
 
-/* Top bar */
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: .8rem 1rem; border-bottom: 1px solid #e0e0e0;
+// independent used-sets per button
+const used = { 'Ä': new Set(), 'D': new Set(), 'G': new Set() };
+
+const statusEl   = document.getElementById('status');
+const logBody    = document.getElementById('logBody');
+const darkToggle = document.getElementById('darkToggle');
+const resetBtn   = document.getElementById('reset');
+
+const btns = {
+  'Ä': document.getElementById('btn-ae'),
+  'D': document.getElementById('btn-d'),
+  'G': document.getElementById('btn-g'),
+};
+
+// Night mode (persisted)
+initDarkMode();
+
+// Wire buttons
+Object.entries(btns).forEach(([label, el]) => {
+  el.addEventListener('click', () => handlePress(label));
+});
+
+// Reset with confirmation
+resetBtn.addEventListener('click', () => {
+  const sure = window.confirm('Reset all numbers for Ä, D, and G and clear the log?');
+  if (!sure) return;
+  resetAll();
+});
+
+updateStatus();
+
+function handlePress(label) {
+  const u = used[label];
+  const start = rand1toN(TOTAL);
+  const n = nextAvailableFrom(start, u); // per-button availability
+  const ts = new Date();
+
+  if (n === null) {
+    appendLog(ts, label, '—');
+    setButtonDisabled(label, true);
+    updateStatus();
+    return;
+  }
+
+  u.add(n);
+  appendLog(ts, label, n);
+  updateStatus();
+  if (u.size === TOTAL) setButtonDisabled(label, true);
 }
-.brand { font-size: clamp(1.2rem, 2vw + .5rem, 1.8rem); display: flex; gap: .35rem; align-items: center; }
-.flag { font-size: 1em; }
-.toggle { display: inline-flex; gap: .5rem; align-items: center; user-select: none; }
 
-.container { max-width: 900px; margin: 1.2rem auto 3rem; padding: 0 1rem; }
-
-.status { text-align: center; margin: 0 0 1.25rem; font-weight: 600; }
-
-.buttons { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.btn {
-  padding: .9rem 1.2rem; border: 1px solid #9aa0a6; border-radius: .8rem;
-  background: transparent; cursor: pointer; font-size: 1.2rem; min-width: 4.5rem;
+function nextAvailableFrom(start, set) {
+  if (set.size >= TOTAL) return null;
+  let candidate = start;
+  for (let i = 0; i < TOTAL; i++) {
+    if (!set.has(candidate)) return candidate;
+    candidate = (candidate % TOTAL) + 1; // wrap 26 -> 1
+  }
+  return null;
 }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
 
-.log h2 { margin: 1rem 0 .5rem; font-size: 1.2rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { border-bottom: 1px solid #e0e0e0; padding: .55rem .5rem; text-align: left; }
-tbody tr:last-child td { border-bottom: none; }
+function rand1toN(n) { return Math.floor(Math.random() * n) + 1; }
 
-/* Dark mode */
-body.dark { background:#0b0c0e; color:#e7e7ea; }
-body.dark .topbar { border-bottom-color: #2a2a2a; }
-body.dark th, body.dark td { border-bottom-color: #2a2a2a; }
-body.dark .btn { border-color: #4b4f56; }
+function updateStatus() {
+  const left = (label) => TOTAL - used[label].size;
+  statusEl.textContent = `Numbers left — Ä: ${left('Ä')}, D: ${left('D')}, G: ${left('G')}`;
+}
+
+function setButtonDisabled(label, disabled) {
+  btns[label].disabled = disabled;
+}
+
+function appendLog(date, label, number) {
+  const tr = document.createElement('tr');
+
+  const t = document.createElement('td');
+  t.textContent = formatTime(date); // HH:MM:SS
+
+  const b = document.createElement('td');
+  b.textContent = label;
+
+  const n = document.createElement('td');
+  n.textContent = number;
+
+  tr.append(t, b, n);
+
+  // newest on top
+  if (logBody.firstChild) {
+    logBody.insertBefore(tr, logBody.firstChild);
+  } else {
+    logBody.appendChild(tr);
+  }
+}
+
+function formatTime(d) {
+  const pad = (x) => String(x).padStart(2, '0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function initDarkMode() {
+  const saved = localStorage.getItem('dark') === '1';
+  document.body.classList.toggle('dark', saved);
+  darkToggle.checked = saved;
+  darkToggle.addEventListener('change', e => {
+    document.body.classList.toggle('dark', e.target.checked);
+    localStorage.setItem('dark', e.target.checked ? '1' : '0');
+  });
+}
+
+function resetAll() {
+  used['Ä'].clear();
+  used['D'].clear();
+  used['G'].clear();
+  Object.values(btns).forEach(b => (b.disabled = false));
+  // Clear log
+  while (logBody.firstChild) logBody.removeChild(logBody.firstChild);
+  updateStatus();
+}
