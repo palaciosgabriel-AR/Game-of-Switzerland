@@ -6,8 +6,8 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   line-height: 1.5;
-  background: #b00016;   /* deep Swiss-red vibe */
-  color: #ffffff;        /* white text for contrast */
+  background: #b00016;   /* deep red */
+  color: #ffffff;        /* white text */
 }
 
 /* Top bar */
@@ -19,7 +19,7 @@ body {
 .flag { font-size: 1em; }
 .toggle { display: inline-flex; gap: .5rem; align-items: center; user-select: none; }
 
-.container { max-width: 900px; margin: 1.2rem auto 3rem; padding: 0 1rem; }
+.container { max-width: 1000px; margin: 1.2rem auto 3rem; padding: 0 1rem; }
 
 .status { text-align: center; margin: 0 0 1.25rem; font-weight: 700; }
 
@@ -30,7 +30,7 @@ body {
   padding: .85rem 1.15rem;
   border: 1px solid rgba(255,255,255,.6);
   border-radius: .8rem;
-  background: rgba(255,255,255,.95);   /* light button on red bg */
+  background: rgba(255,255,255,.95);
   color: #111;
   cursor: pointer;
   font-size: 1rem;
@@ -51,8 +51,49 @@ body {
   box-shadow: 0 1px 0 rgba(0,0,0,.08);
 }
 
+/* Map assignment controls */
+.map-assign { margin: 2rem 0; }
+.assign-controls {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; justify-content: center;
+  margin-bottom: .8rem;
+}
+.assign-label { opacity: .9; font-weight: 600; }
+.chip {
+  padding: .35rem .7rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.6);
+  background: rgba(255,255,255,.15); color: #fff; cursor: pointer; font-weight: 700;
+}
+.chip.active { background: #fff; color: #111; }
+
+.legend { margin-left: .8rem; display: inline-flex; gap: .6rem; align-items: center; }
+.swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.25); }
+.swatch-d  { background: #4B5320; }
+.swatch-ae { background: #7EC8E3; }
+.swatch-g  { background: #004080; }
+
+/* Map */
+.map-wrap { display: flex; justify-content: center; }
+#ch-map {
+  max-width: 100%;
+  height: auto;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: .8rem;
+}
+.canton rect, .canton path {
+  fill: rgba(255,255,255,.9);
+  stroke: rgba(0,0,0,.25);
+  stroke-width: 1;
+  cursor: pointer;
+  transition: transform .06s ease, fill .15s ease, stroke .15s ease;
+}
+.canton:hover rect, .canton:hover path { transform: translateY(-1px); }
+.canton text { pointer-events: none; fill: #111; font-weight: 800; }
+
+/* Counts */
+.counts { text-align: center; margin-top: .6rem; opacity: .95; font-weight: 600; }
+
 /* Log table */
-.log h2 { margin: 1rem 0 .5rem; font-size: 1.2rem; }
+.log h2 { margin: 1.2rem 0 .5rem; font-size: 1.2rem; }
 table { width: 100%; border-collapse: collapse; }
 th, td {
   border-bottom: 1px solid rgba(255,255,255,.25);
@@ -78,10 +119,18 @@ body.dark .btn { border-color: #4b4f56; }
 /* Letter buttons readable in dark mode */
 body.dark .btn-letter {
   background: #111214;
-  color: #ffffff;            /* white letters on dark */
+  color: #ffffff;
   border-color: #ffffff;
   box-shadow: none;
 }
+
+/* Map in dark mode */
+body.dark #ch-map { background: #121317; border-color: #2a2a2a; }
+body.dark .canton rect, body.dark .canton path {
+  fill: #1b1c21;
+  stroke: #2a2a2a;
+}
+body.dark .canton text { fill: #e7e7ea; }
 
 /* Reset button in dark mode */
 body.dark .btn-reset {
