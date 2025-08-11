@@ -127,10 +127,9 @@ body {
   z-index: 2;
   display: flex;
   gap: .7rem;
-  background: rgba(0,0,0,.15);
+  background: rgba(0,0,0,.12);
   padding: .4rem .6rem;
   border-radius: .6rem;
-  backdrop-filter: blur(2px);
   border: 1px solid rgba(255,255,255,.25);
 }
 .buttons-overlay .btn-letter {
@@ -140,8 +139,8 @@ body {
 
 /* Canton shapes */
 .canton path, .canton rect {
-  fill: rgba(255,255,255,.9);
-  stroke: rgba(0,0,0,.25);
+  fill: rgba(255,255,255,.9) !important;  /* default white-ish */
+  stroke: rgba(0,0,0,.25) !important;
   stroke-width: 1;
   cursor: pointer;
   transition: transform .06s ease, fill .15s ease, stroke .15s ease;
@@ -201,6 +200,6 @@ body.dark .buttons-overlay {
 /* Map surface + canton defaults in dark mode */
 body.dark #ch-map { background: #121317; border-color: #2a2a2a; }
 body.dark .canton path, body.dark .canton rect {
-  fill: #1b1c21;
-  stroke: #2a2a2a;
+  fill: #1b1c21 !important;
+  stroke: #2a2a2a !important;
 }
