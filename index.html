@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game of Switzerland 2.0</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1 class="title">
+      <span class="flag">🇨🇭</span>
+      Game of Switzerland 2.0
+      <span class="flag">🇨🇭</span>
+    </h1>
+
+    <p id="status" class="status">Numbers left: 26</p>
+
+    <div class="buttons">
+      <button id="btn-ae" class="btn">Ä</button>
+      <button id="btn-d"  class="btn">D</button>
+      <button id="btn-g"  class="btn">G</button>
+    </div>
+
+    <section class="log">
+      <h2>Log</h2>
+      <table>
+        <thead>
+          <tr><th>Time</th><th>Button</th><th>Number</th></tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
