@@ -21,7 +21,14 @@
   <main class="container">
     <p id="status" class="status"></p>
 
-    <!-- LOG (newest first, now persists) -->
+    <!-- DÄG buttons (not on the map anymore) -->
+    <section class="buttons">
+      <button id="btn-d"  class="btn btn-letter">D</button>
+      <button id="btn-ae" class="btn btn-letter">Ä</button>
+      <button id="btn-g"  class="btn btn-letter">G</button>
+    </section>
+
+    <!-- LOG (newest first, persists) -->
     <section class="log">
       <h2>Log</h2>
       <table>
@@ -48,14 +55,7 @@
       </div>
 
       <div class="map-wrap">
-        <!-- overlayed number buttons -->
-        <div class="buttons buttons-overlay">
-          <button id="btn-d"  class="btn btn-letter">D</button>
-          <button id="btn-ae" class="btn btn-letter">Ä</button>
-          <button id="btn-g"  class="btn btn-letter">G</button>
-        </div>
-
-        <!-- empty SVG; script.js injects real canton paths -->
+        <!-- script.js injects canton paths here -->
         <svg id="ch-map" viewBox="0 0 1000 700" role="img" aria-label="Swiss cantons">
           <g class="cantons" id="cantons-layer"></g>
         </svg>
